@@ -1,0 +1,59 @@
+<%#
+class String 
+  def to_jenkins_xml
+    to_s
+  end
+end
+
+class Array
+  def to_jenkins_xml
+    each do |item|
+      item.to_jenkins_xml
+    end
+  end
+end
+
+class Hash
+  def to_jenkins_xml
+    each do |k,v|
+      if v.nil?
+        "<#{k}/>"
+      else
+        "  <#{k}>
+               #{v.to_jenkins_xml}
+             </#{k}>
+"
+      end
+    end
+  end
+end
+%>
+<?xml version='1.0' encoding='UTF-8'?>
+<%- jobs_classes = []
+  classes.each do |klass|
+    jobs_class << klass if klass =~ /configurer::plugin::.+::class/
+  end -%>
+<%= jobs_classes %>
+<%- array_for_job.each do |node| -%>
+<%- node.each do |key,value| -%>
+<<%= key %>>
+  <%- if value.is_a? Array -%>
+  <%- value.each do |blah| -%>
+    <%- blah.each do |akey,avalue| -%>
+    <<%= akey %>>
+      <%= avalue %>
+    </<%= akey %>>
+    <%- end -%>
+  <%- end -%>
+  <%- else -%>
+  <%= value %>
+  <%- end -%>
+</<%= key %>>
+<%- end -%>
+<%- end -%>
+
+Array responds to .to_xml?:  <%= array_for_job.respond_to? :to_xml %>
+Hash responds to .to_xml?:   <%= array_for_job[0].respond_to? :to_xml %>
+String responds to .to_xml?: <%= array_for_job[0]['project'][0]['name'].respond_to? :to_xml %>
+
+<%= array_for_job.to_xml %>

@@ -1,0 +1,11 @@
+<project>
+  <ip><%= ipaddress %></ip>
+  <name>
+    <%= name %>
+  </name>
+  <% plugins.each do |plugin| -%>
+  <<%= plugin -%>/>
+  <% end -%>
+
+  <%= plugins.class.to_s %>
+</project>
